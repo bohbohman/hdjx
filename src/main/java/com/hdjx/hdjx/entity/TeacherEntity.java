@@ -4,8 +4,8 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "school")
-public class SchoolEntity {
+@Table(name = "teacher")
+public class TeacherEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -13,10 +13,10 @@ public class SchoolEntity {
     private Integer id;
 
     /**
-     * 编号
+     * 学校id
      */
-    @Column(name = "code", nullable = false)
-    private String code;
+    @Column(name = "school_id", nullable = false)
+    private Integer schoolId;
 
     /**
      * 名称
@@ -25,22 +25,22 @@ public class SchoolEntity {
     private String name;
 
     /**
-     * 编号
+     * 手机号
      */
-    @Column(name = "phonetic", nullable = false)
-    private String phonetic;
+    @Column(name = "phone", nullable = false)
+    private String phone;
 
     /**
-     * 登录用户名称
+     * 类型 组长或者组员
      */
-    @Column(name = "user_name", nullable = false)
-    private String userName;
+    @Column(name = "type", nullable = false)
+    private String type;
 
     /**
-     * 密码
+     * 学科
      */
-    @Column(name = "password", nullable = false)
-    private String password;
+    @Column(name = "subject", nullable = false)
+    private String subject;
 
     @Column(name = "created_at", nullable = false)
     @Temporal(TemporalType.DATE)
@@ -69,12 +69,12 @@ public class SchoolEntity {
         this.id = id;
     }
 
-    public String getCode() {
-        return code;
+    public Integer getSchoolId() {
+        return schoolId;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setSchoolId(Integer schoolId) {
+        this.schoolId = schoolId;
     }
 
     public String getName() {
@@ -85,28 +85,28 @@ public class SchoolEntity {
         this.name = name;
     }
 
-    public String getPhonetic() {
-        return phonetic;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setPhonetic(String phonetic) {
-        this.phonetic = phonetic;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getType() {
+        return type;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setType(String type) {
+        this.type = type;
     }
 
-    public String getPassword() {
-        return password;
+    public String getSubject() {
+        return subject;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setSubject(String subject) {
+        this.subject = subject;
     }
 
     public Date getCreatedAt() {
