@@ -13,6 +13,12 @@ public class TeacherEntity {
     private Integer id;
 
     /**
+     * 组长id
+     */
+    @Column(name = "parent_id", nullable = false)
+    private Integer parentId;
+
+    /**
      * 学校id
      */
     @Column(name = "school_id", nullable = false)
@@ -31,7 +37,7 @@ public class TeacherEntity {
     private String phone;
 
     /**
-     * 类型 组长或者组员
+     * 类型 组长或者组员 LEADER/MEMBER
      */
     @Column(name = "type", nullable = false)
     private String type;
@@ -41,6 +47,12 @@ public class TeacherEntity {
      */
     @Column(name = "subject", nullable = false)
     private String subject;
+
+    /**
+     * 学校类别
+     */
+    @Column(name = "school_type", nullable = false)
+    private String schoolType;
 
     @Column(name = "created_at", nullable = false)
     @Temporal(TemporalType.DATE)
@@ -67,6 +79,14 @@ public class TeacherEntity {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Integer getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(Integer parentId) {
+        this.parentId = parentId;
     }
 
     public Integer getSchoolId() {
@@ -123,5 +143,13 @@ public class TeacherEntity {
 
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public String getSchoolType() {
+        return schoolType;
+    }
+
+    public void setSchoolType(String schoolType) {
+        this.schoolType = schoolType;
     }
 }

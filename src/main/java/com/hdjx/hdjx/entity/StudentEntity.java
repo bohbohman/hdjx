@@ -67,10 +67,16 @@ public class StudentEntity {
     private String isJoin;
 
     /**
+     * 学校类别
+     */
+    @Column(name = "school_type", nullable = false)
+    private String schoolType;
+
+    /**
      * 备注
      */
-    @Column(name = "desc", nullable = false)
-    private String desc;
+    @Column(name = "description", nullable = false)
+    private String description;
 
     @Column(name = "created_at", nullable = false)
     @Temporal(TemporalType.DATE)
@@ -171,12 +177,12 @@ public class StudentEntity {
         this.isJoin = isJoin;
     }
 
-    public String getDesc() {
-        return desc;
+    public String getDescription() {
+        return description;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Date getCreatedAt() {
@@ -193,5 +199,13 @@ public class StudentEntity {
 
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public String getSchoolType() {
+        return schoolType;
+    }
+
+    public void setSchoolType(String schoolType) {
+        this.schoolType = schoolType;
     }
 }

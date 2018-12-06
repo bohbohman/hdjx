@@ -42,6 +42,36 @@ public class SchoolEntity {
     @Column(name = "password", nullable = false)
     private String password;
 
+    /**
+     * 是否完成
+     */
+    @Column(name = "is_complete", nullable = false)
+    private String isComplete;
+
+    /**
+     * 班级数
+     */
+    @Column(name = "grand_num", nullable = false)
+    private String grandNum;
+
+    /**
+     * 负责人
+     */
+    @Column(name = "principal", nullable = false)
+    private String principal;
+
+    /**
+     * 联系电话
+     */
+    @Column(name = "tel", nullable = false)
+    private String tel;
+
+    /**
+     * 手机号
+     */
+    @Column(name = "phone", nullable = false)
+    private String phone;
+
     @Column(name = "created_at", nullable = false)
     @Temporal(TemporalType.DATE)
     private Date createdAt;
@@ -123,5 +153,45 @@ public class SchoolEntity {
 
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public String getIsComplete() {
+        return isComplete;
+    }
+
+    public void setIsComplete(String isComplete) {
+        this.isComplete = isComplete;
+    }
+
+    public String getGrandNum() {
+        return grandNum;
+    }
+
+    public void setGrandNum(String grandNum) {
+        this.grandNum = grandNum;
+    }
+
+    public String getPrincipal() {
+        return principal;
+    }
+
+    public void setPrincipal(String principal) {
+        this.principal = principal;
+    }
+
+    public String getTel() {
+        return tel;
+    }
+
+    public void setTel(String tel) {
+        this.tel = tel;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }

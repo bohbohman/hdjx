@@ -94,3 +94,9 @@ target/test-classes/com/hdjx/hdjx/HdjxApplicationTests.class
 .idea/libraries/Maven__org_unbescape_unbescape_1_1_6_RELEASE.xml
 .idea/libraries/Maven__org_xmlunit_xmlunit_core_2_6_2.xml
 .idea/libraries/Maven__org_yaml_snakeyaml_1_23.xml
+target/classes/com/hdjx/hdjx/controller/StudentController.class
+target/classes/com/hdjx/hdjx/controller/TeacherController.class
+target/classes/com/hdjx/hdjx/dao/StudentDao.class
+target/classes/com/hdjx/hdjx/dao/TeacherDao.class
+target/classes/com/hdjx/hdjx/entity/StudentEntity.class
+target/classes/com/hdjx/hdjx/entity/TeacherEntity.class
