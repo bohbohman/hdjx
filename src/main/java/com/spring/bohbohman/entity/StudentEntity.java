@@ -1,12 +1,14 @@
 package com.spring.bohbohman.entity;
 
+import lombok.Data;
+
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @Table(name = "student")
-public class StudentEntity implements Serializable {
+@Data
+public class StudentEntity implements BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -96,117 +98,5 @@ public class StudentEntity implements Serializable {
     @PreUpdate
     public void onUpdate() {
         updatedAt = new Date();
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getSchoolId() {
-        return schoolId;
-    }
-
-    public void setSchoolId(Integer schoolId) {
-        this.schoolId = schoolId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getGrade() {
-        return grade;
-    }
-
-    public void setGrade(String grade) {
-        this.grade = grade;
-    }
-
-    public String getIdCard() {
-        return idCard;
-    }
-
-    public void setIdCard(String idCard) {
-        this.idCard = idCard;
-    }
-
-    public String getExamRoomNum() {
-        return examRoomNum;
-    }
-
-    public void setExamRoomNum(String examRoomNum) {
-        this.examRoomNum = examRoomNum;
-    }
-
-    public String getSubject() {
-        return subject;
-    }
-
-    public void setSubject(String subject) {
-        this.subject = subject;
-    }
-
-    public String getSeatNum() {
-        return seatNum;
-    }
-
-    public void setSeatNum(String seatNum) {
-        this.seatNum = seatNum;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getIsJoin() {
-        return isJoin;
-    }
-
-    public void setIsJoin(String isJoin) {
-        this.isJoin = isJoin;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public String getSchoolType() {
-        return schoolType;
-    }
-
-    public void setSchoolType(String schoolType) {
-        this.schoolType = schoolType;
     }
 }

@@ -2,9 +2,9 @@ package com.spring.bohbohman.controller;
 
 import com.spring.bohbohman.bean.request.StudentRequest;
 import com.spring.bohbohman.bean.response.StudentResponse;
-import com.spring.bohbohman.dao.SchoolDao;
-import com.spring.bohbohman.dao.StudentDao;
-import com.spring.bohbohman.dao.TeacherDao;
+import com.spring.bohbohman.repository.SchoolRepository;
+import com.spring.bohbohman.repository.StudentRepository;
+import com.spring.bohbohman.repository.TeacherRepository;
 import com.spring.bohbohman.entity.StudentEntity;
 import com.spring.bohbohman.util.BeanMapping;
 import org.apache.commons.lang3.StringUtils;
@@ -26,13 +26,13 @@ public class StudentController {
 
 
     @Autowired
-    private SchoolDao schoolDao;
+    private SchoolRepository schoolRepository;
 
     @Autowired
-    private StudentDao studentDao;
+    private StudentRepository studentRepository;
 
     @Autowired
-    private TeacherDao teacherDao;
+    private TeacherRepository teacherRepository;
 
     /**
      * 新增学生
@@ -68,7 +68,7 @@ public class StudentController {
             result.put("msg", "学生类别只能是'H'或'X'");
             return result;
         }
-        List<StudentEntity> studentEntities = studentDao.findByIdCardAndSubject(reqBean.getIdCard(),reqBean.getSubject());
+        List<StudentEntity> studentEntities = studentRepository.findByIdCardAndSubject(reqBean.getIdCard(),reqBean.getSubject());
         if(studentEntities!=null && studentEntities.size()>0){
             result.put("status", false);
             result.put("msg", "身份证已存在");
@@ -77,7 +77,7 @@ public class StudentController {
 
         StudentEntity studentEntity = BeanMapping.map(reqBean,StudentEntity.class);
         studentEntity.setId(null);
-        studentEntity = studentDao.save(studentEntity);
+        studentEntity = studentRepository.save(studentEntity);
         StudentResponse studentResponse = BeanMapping.map(studentEntity,StudentResponse.class);
         result.put("status", true);
         result.put("msg", "新增学生成功");
@@ -94,7 +94,7 @@ public class StudentController {
     Map<String, Object> update(@RequestBody StudentRequest reqBean){
 
         Map<String, Object> result = new LinkedHashMap<>();
-        Optional<StudentEntity> optionalStudentEntity = studentDao.findById(reqBean.getId());
+        Optional<StudentEntity> optionalStudentEntity = studentRepository.findById(reqBean.getId());
         String REGEX_ID_CARD = "(^[1-9]\\d{5}(18|19|([23]\\d))\\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\\d{3}[0-9Xx]$)|(^[1-9]\\d{5}\\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\\d{2}$)";
         if (null == optionalStudentEntity) {
             result.put("status", false);
@@ -124,7 +124,7 @@ public class StudentController {
             result.put("msg", "学生类别只能是'H'或'X'");
             return result;
         }
-        List<StudentEntity> studentEntities = studentDao.findByIdCardAndSubject(reqBean.getIdCard(),reqBean.getSubject());
+        List<StudentEntity> studentEntities = studentRepository.findByIdCardAndSubject(reqBean.getIdCard(),reqBean.getSubject());
         if(studentEntities!=null && studentEntities.size()>0){
             if(studentEntities.get(0).getId().intValue() != reqBean.getId()){
                 result.put("status", false);
@@ -143,7 +143,7 @@ public class StudentController {
         studentEntity.setSubject(reqBean.getSubject());
         studentEntity.setType(reqBean.getType());
         studentEntity.setSchoolType(reqBean.getSchoolType());
-        studentEntity = studentDao.save(studentEntity);;
+        studentEntity = studentRepository.save(studentEntity);;
         StudentResponse studentResponse = BeanMapping.map(studentEntity,StudentResponse.class);
         result.put("status", true);
         result.put("msg", "更新学生成功");
@@ -159,13 +159,13 @@ public class StudentController {
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     Map<String, Object> delete(@PathVariable Integer id){
         Map<String, Object> result = new LinkedHashMap<>();
-        StudentEntity studentEntity = studentDao.getOne(id);
+        StudentEntity studentEntity = studentRepository.getOne(id);
         if (null == studentEntity) {
             result.put("status", false);
             result.put("msg", "学生不存在！");
             return result;
         }
-        studentDao.deleteById(id);
+        studentRepository.deleteById(id);
 
         result.put("status", true);
         result.put("msg", "删除学生成功");
@@ -180,7 +180,7 @@ public class StudentController {
      */
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     StudentResponse get(@PathVariable Integer id){
-        StudentEntity studentEntity = studentDao.getOne(id);
+        StudentEntity studentEntity = studentRepository.getOne(id);
         StudentResponse studentResponse = BeanMapping.map(studentEntity,StudentResponse.class);
         return studentResponse;
     }
@@ -218,7 +218,7 @@ public class StudentController {
                 return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
             }
         };
-        List<StudentEntity> studentEntities = studentDao.findAll(specification);
+        List<StudentEntity> studentEntities = studentRepository.findAll(specification);
         List<StudentResponse> studentResponse = BeanMapping.mapList(studentEntities,StudentResponse.class);
         return studentResponse;
     }

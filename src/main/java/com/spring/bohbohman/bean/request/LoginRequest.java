@@ -1,24 +1,12 @@
 package com.spring.bohbohman.bean.request;
 
-public class LoginRequest {
+import com.spring.bohbohman.bean.AbstractBaseApiBean;
+import lombok.Data;
+
+@Data
+public class LoginRequest extends AbstractBaseApiBean {
 
     private String userName;
 
     private String password;
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }

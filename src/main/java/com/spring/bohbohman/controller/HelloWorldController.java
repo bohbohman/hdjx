@@ -1,9 +1,16 @@
 package com.spring.bohbohman.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.spring.bohbohman.dao.SchoolDao;
+import com.google.common.collect.Lists;
+import com.spring.bohbohman.repository.SchoolRepository;
+import com.spring.bohbohman.repository.TeacherRepository;
 import com.spring.bohbohman.entity.SchoolEntity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +18,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.List;
 
 /**
  * @Auther: xueyb
@@ -23,7 +36,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class HelloWorldController {
 
     @Autowired
-    private SchoolDao schoolDao;
+    private SchoolRepository schoolRepository;
+
+    @Autowired
+    private TeacherRepository teacherRepository;
 
     @Autowired
     private RedisTemplate redisTemplate;
@@ -43,9 +59,27 @@ public class HelloWorldController {
         if (hasKey) {
             schoolEntity = operations.get(key);
         } else {
-            schoolEntity = schoolDao.getOne(schoolId);
+            schoolEntity = schoolRepository.getOne(schoolId);
             operations.set(key, schoolEntity);
         }
         return JSON.toJSON(schoolEntity);
     }
+
+    @RequestMapping(value = "/schools", method = RequestMethod.GET)
+    public Page<SchoolEntity> findSchools(@RequestParam(required = false, defaultValue = "0") Integer pageIndex,
+                                          @RequestParam(required = false, defaultValue = "5") Integer pageSize) {
+        Pageable pageable = PageRequest.of(pageIndex, pageSize, new Sort(Sort.Direction.DESC, "id"));
+        Page<SchoolEntity> schoolPage = schoolRepository.findAll(new Specification<SchoolEntity>() {
+            @Override
+            public Predicate toPredicate(Root<SchoolEntity> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> list = Lists.newArrayList();
+                list.add(criteriaBuilder.like(root.get("name").as(String.class), "%学%"));
+
+                Predicate[] p = new Predicate[list.size()];
+                return criteriaBuilder.and(list.toArray(p));
+            }
+        }, pageable);
+        return schoolPage;
+    }
+
 }

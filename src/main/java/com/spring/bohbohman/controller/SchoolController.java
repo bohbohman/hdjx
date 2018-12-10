@@ -1,22 +1,17 @@
 package com.spring.bohbohman.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.spring.bohbohman.bean.request.LoginRequest;
 import com.spring.bohbohman.bean.request.UpdatePasswordRequest;
 import com.spring.bohbohman.core.SubjectType;
-import com.spring.bohbohman.dao.SchoolDao;
-import com.spring.bohbohman.dao.StudentDao;
-import com.spring.bohbohman.dao.TeacherDao;
+import com.spring.bohbohman.repository.SchoolRepository;
+import com.spring.bohbohman.repository.StudentRepository;
+import com.spring.bohbohman.repository.TeacherRepository;
 import com.spring.bohbohman.entity.SchoolEntity;
 import com.spring.bohbohman.entity.StudentEntity;
 import com.spring.bohbohman.entity.TeacherEntity;
 import com.spring.bohbohman.util.WDWUtil;
 import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.BorderStyle;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -47,24 +42,24 @@ public class SchoolController {
 
 
     @Autowired
-    private SchoolDao schoolDao;
+    private SchoolRepository schoolRepository;
 
     @Autowired
-    private TeacherDao teacherDao;
+    private TeacherRepository teacherRepository;
 
     @Autowired
-    private StudentDao studentDao;
+    private StudentRepository studentRepository;
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public Map<String, Object> login(@RequestBody LoginRequest loginRequest){
-        SchoolEntity schoolDaoByUserName = schoolDao.findByUserName(loginRequest.getUserName());
+        SchoolEntity schoolDaoByUserName = schoolRepository.findByUserName(loginRequest.getUserName());
         if (null == schoolDaoByUserName){
             Map<String, Object> map = new HashMap<>();
             map.put("status", false);
             map.put("msg", "用户名错误！");
             return map;
         }
-        SchoolEntity schoolEntity = schoolDao.findByUserNameAndPassword(loginRequest.getUserName(),loginRequest.getPassword());
+        SchoolEntity schoolEntity = schoolRepository.findByUserNameAndPassword(loginRequest.getUserName(),loginRequest.getPassword());
         if (null!=schoolEntity){
             Map<String, Object> map = new HashMap<>();
             map.put("status", true);
@@ -80,11 +75,11 @@ public class SchoolController {
     @RequestMapping(value = "/updatePassword", method = RequestMethod.PUT)
     public String updatePassword(@RequestBody UpdatePasswordRequest updatePasswordRequest){
 
-        Optional<SchoolEntity> schoolEntity = schoolDao.findById(updatePasswordRequest.getId());
+        Optional<SchoolEntity> schoolEntity = schoolRepository.findById(updatePasswordRequest.getId());
         if (schoolEntity.isPresent()){
             SchoolEntity entity = schoolEntity.get();
             entity.setPassword(updatePasswordRequest.getPassword());
-            schoolDao.save(entity);
+            schoolRepository.save(entity);
         }
         return "success";
     }
@@ -100,7 +95,7 @@ public class SchoolController {
                                            @RequestParam(value = "schoolId") Integer schoolId) throws IOException {
         Map<String, Object> result = new LinkedHashMap<>();
 
-        SchoolEntity schoolEntity = schoolDao.getOne(schoolId);
+        SchoolEntity schoolEntity = schoolRepository.getOne(schoolId);
         if (null == schoolEntity) {
             result.put("status", false);
             result.put("msg", "学校不存在！");
@@ -252,7 +247,7 @@ public class SchoolController {
         }
         //参数校验
         //身份证是否重复
-        List<StudentEntity> allStudentList = studentDao.findAll();
+        List<StudentEntity> allStudentList = studentRepository.findAll();
         allStudentList.addAll(studentEntityList);
         Map<String, Map<String, Long>> idCardMap = allStudentList.stream().collect(Collectors.groupingBy(StudentEntity::getIdCard, Collectors.groupingBy(StudentEntity::getSubject, Collectors.counting())));
 
@@ -298,11 +293,11 @@ public class SchoolController {
             return result;
         }
 
-        schoolDao.save(schoolEntity);
+        schoolRepository.save(schoolEntity);
         if (!teacherMap.isEmpty()) {
             List<TeacherEntity> teacherEntityList = new ArrayList<>();
             teacherMap.forEach((k, v) -> {
-                TeacherEntity teacherEntity = teacherDao.save(k);
+                TeacherEntity teacherEntity = teacherRepository.save(k);
                 if (null != v && !v.isEmpty()) {
                     v.forEach(o -> {
                         o.setParentId(teacherEntity.getId());
@@ -310,10 +305,10 @@ public class SchoolController {
                     teacherEntityList.addAll(v);
                 }
             });
-            teacherDao.saveAll(teacherEntityList);
+            teacherRepository.saveAll(teacherEntityList);
         }
         if (!studentEntityList.isEmpty()) {
-            studentDao.saveAll(studentEntityList);
+            studentRepository.saveAll(studentEntityList);
         }
 
         result.put("status", true);
@@ -330,21 +325,21 @@ public class SchoolController {
     @RequestMapping(value = "/deleteAll",method = RequestMethod.POST)
     public Map<String, Object> batchimport(@RequestParam(value = "schoolId") Integer schoolId) {
         Map<String, Object> result = new LinkedHashMap<>();
-        SchoolEntity schoolEntity = schoolDao.getOne(schoolId);
+        SchoolEntity schoolEntity = schoolRepository.getOne(schoolId);
         if (null == schoolEntity) {
             result.put("status", false);
             result.put("msg", "该学校不存在！");
             return result;
         }
         //删除所有学生
-        List<StudentEntity> studentEntityList = studentDao.findBySchoolId(schoolId);
+        List<StudentEntity> studentEntityList = studentRepository.findBySchoolId(schoolId);
         if (null != studentEntityList && !studentEntityList.isEmpty()) {
-            studentDao.deleteAll(studentEntityList);
+            studentRepository.deleteAll(studentEntityList);
         }
         //删除所有老师
-        List<TeacherEntity> teacherEntityList = teacherDao.findBySchoolId(schoolId);
+        List<TeacherEntity> teacherEntityList = teacherRepository.findBySchoolId(schoolId);
         if (null != teacherEntityList && !teacherEntityList.isEmpty()) {
-            teacherDao.deleteAll(teacherEntityList);
+            teacherRepository.deleteAll(teacherEntityList);
         }
         //变更学校状态
         schoolEntity.setIsComplete("NO");
@@ -352,7 +347,7 @@ public class SchoolController {
         schoolEntity.setPrincipal("");
         schoolEntity.setPhone("");
         schoolEntity.setTel("");
-        schoolDao.save(schoolEntity);
+        schoolRepository.save(schoolEntity);
 
         result.put("status", true);
         result.put("msg", "删除成功！");
@@ -401,37 +396,37 @@ public class SchoolController {
             HSSFSheet wl = wb.createSheet("学生信息(物理)");
             HSSFRow wlRow = wl.createRow(0);
             wl.createFreezePane(0, 1);
-            List<StudentEntity> studentDaoBySubject = studentDao.findBySubject(SubjectType.WULI);
+            List<StudentEntity> studentDaoBySubject = studentRepository.findBySubject(SubjectType.WULI);
             createCommon(studentDaoBySubject,wb,wl,wlRow);
 
             HSSFSheet hx = wb.createSheet("学生信息(化学)");
             HSSFRow hxRow = hx.createRow(0);
             hx.createFreezePane(0, 1);
-            List<StudentEntity> studentDaoByHX = studentDao.findBySubject(SubjectType.HUAXUE);
+            List<StudentEntity> studentDaoByHX = studentRepository.findBySubject(SubjectType.HUAXUE);
             createCommon(studentDaoByHX,wb,hx,hxRow);
 
             HSSFSheet sw = wb.createSheet("学生信息(生物)");
             HSSFRow swRow = sw.createRow(0);
             sw.createFreezePane(0, 1);
-            List<StudentEntity> studentDaoBySW = studentDao.findBySubject(SubjectType.HUAXUE);
+            List<StudentEntity> studentDaoBySW = studentRepository.findBySubject(SubjectType.HUAXUE);
             createCommon(studentDaoBySW,wb,sw,swRow);
 
             HSSFSheet ls = wb.createSheet("学生信息(历史)");
             HSSFRow lsRow = ls.createRow(0);
             ls.createFreezePane(0, 1);
-            List<StudentEntity> studentDaoByLS = studentDao.findBySubject(SubjectType.LISHI);
+            List<StudentEntity> studentDaoByLS = studentRepository.findBySubject(SubjectType.LISHI);
             createCommon(studentDaoByLS,wb,ls,lsRow);
 
             HSSFSheet dl = wb.createSheet("学生信息(地理)");
             HSSFRow dlRow = dl.createRow(0);
             dl.createFreezePane(0, 1);
-            List<StudentEntity> studentDaoByDL = studentDao.findBySubject(SubjectType.DILI);
+            List<StudentEntity> studentDaoByDL = studentRepository.findBySubject(SubjectType.DILI);
             createCommon(studentDaoByDL,wb,dl,dlRow);
 
             HSSFSheet zz = wb.createSheet("学生信息(政治)");
             HSSFRow zzRow = zz.createRow(0);
             zz.createFreezePane(0, 1);
-            List<StudentEntity> studentDaoByZZ = studentDao.findBySubject(SubjectType.ZHENGZHI);
+            List<StudentEntity> studentDaoByZZ = studentRepository.findBySubject(SubjectType.ZHENGZHI);
             createCommon(studentDaoByZZ,wb,zz,zzRow);
             wb.write(os);
             os.flush();
@@ -450,7 +445,7 @@ public class SchoolController {
             cteateCell(wb, row, (short) 2, "填报负责人姓名");
             cteateCell(wb, row, (short) 3, "联系电话");
             cteateCell(wb, row, (short) 4, "手机号码");
-            Optional<SchoolEntity> schoolDaoById = schoolDao.findById(schoolId);
+            Optional<SchoolEntity> schoolDaoById = schoolRepository.findById(schoolId);
             if (schoolDaoById.isPresent()){
                 SchoolEntity schoolEntity = schoolDaoById.get();
                 int i = 0;
@@ -482,7 +477,7 @@ public class SchoolController {
             cteateCell(wb, row, (short) 5, "是否参加成绩统计");
             cteateCell(wb, row, (short) 6, "学校");
 
-            List<StudentEntity> studentEntities =  studentDao.findBySchoolIdAndSchoolTypeAndSubject(schoolId,grade,SubjectType.YSY);
+            List<StudentEntity> studentEntities =  studentRepository.findBySchoolIdAndSchoolTypeAndSubject(schoolId,grade,SubjectType.YSY);
             if (null!=studentEntities&&studentEntities.size()>0){
                 int i = 0;
                 Iterator<StudentEntity> studentEntityIterator = studentEntities.iterator();
@@ -496,7 +491,7 @@ public class SchoolController {
                         cteateCell(wb, rowi, (short) 3, studentEntity.getExamRoomNum());
                         cteateCell(wb, rowi, (short) 4, studentEntity.getSeatNum());
                         cteateCell(wb, rowi, (short) 5, studentEntity.getIsJoin());
-                        SchoolEntity schoolDaoOne = schoolDao.getOne(studentEntity.getSchoolId());
+                        SchoolEntity schoolDaoOne = schoolRepository.getOne(studentEntity.getSchoolId());
                         cteateCell(wb, rowi, (short) 6, schoolDaoOne.getName());
 
                     }
@@ -513,7 +508,7 @@ public class SchoolController {
             HSSFSheet sheet = wb.createSheet("学生信息(物理)");
             HSSFRow row = sheet.createRow((short) 0);
 
-            List<StudentEntity> studentEntities =  studentDao.findBySchoolIdAndSchoolTypeAndSubject(schoolId,grade,SubjectType.WULI);
+            List<StudentEntity> studentEntities =  studentRepository.findBySchoolIdAndSchoolTypeAndSubject(schoolId,grade,SubjectType.WULI);
             createFixationSheet(os, studentEntities,wb,sheet,row);
         }else if (SubjectType.SHENGWU.equals(type)){
             // 创建工作薄
@@ -522,7 +517,7 @@ public class SchoolController {
             HSSFSheet sheet = wb.createSheet("学生信息(生物)");
             HSSFRow row = sheet.createRow((short) 0);
 
-            List<StudentEntity> studentEntities =  studentDao.findBySchoolIdAndSchoolTypeAndSubject(schoolId,grade,SubjectType.SHENGWU);
+            List<StudentEntity> studentEntities =  studentRepository.findBySchoolIdAndSchoolTypeAndSubject(schoolId,grade,SubjectType.SHENGWU);
 
             createFixationSheet(os, studentEntities,wb,sheet,row);
         }else if (SubjectType.HUAXUE.equals(type)){
@@ -532,7 +527,7 @@ public class SchoolController {
             HSSFSheet sheet = wb.createSheet("学生信息(化学)");
             HSSFRow row = sheet.createRow((short) 0);
 
-            List<StudentEntity> studentEntities =  studentDao.findBySchoolIdAndSchoolTypeAndSubject(schoolId,grade,SubjectType.HUAXUE);
+            List<StudentEntity> studentEntities =  studentRepository.findBySchoolIdAndSchoolTypeAndSubject(schoolId,grade,SubjectType.HUAXUE);
 
             createFixationSheet(os, studentEntities,wb,sheet,row);
         }else if (SubjectType.LISHI.equals(type)){
@@ -542,7 +537,7 @@ public class SchoolController {
             HSSFSheet sheet = wb.createSheet("学生信息(历史)");
             HSSFRow row = sheet.createRow((short) 0);
 
-            List<StudentEntity> studentEntities =  studentDao.findBySchoolIdAndSchoolTypeAndSubject(schoolId,grade,SubjectType.LISHI);
+            List<StudentEntity> studentEntities =  studentRepository.findBySchoolIdAndSchoolTypeAndSubject(schoolId,grade,SubjectType.LISHI);
 
             createFixationSheet(os, studentEntities,wb,sheet,row);
         }else if (SubjectType.DILI.equals(type)){
@@ -552,7 +547,7 @@ public class SchoolController {
             HSSFSheet sheet = wb.createSheet("学生信息(地理)");
             HSSFRow row = sheet.createRow((short) 0);
 
-            List<StudentEntity> studentEntities =  studentDao.findBySchoolIdAndSchoolTypeAndSubject(schoolId,grade,SubjectType.DILI);
+            List<StudentEntity> studentEntities =  studentRepository.findBySchoolIdAndSchoolTypeAndSubject(schoolId,grade,SubjectType.DILI);
 
             createFixationSheet(os, studentEntities,wb,sheet,row);
         }else if (SubjectType.ZHENGZHI.equals(type)){
@@ -561,7 +556,7 @@ public class SchoolController {
             // 在工作薄上建一张工作表
             HSSFSheet sheet = wb.createSheet("学生信息(政治)");
             HSSFRow row = sheet.createRow((short) 0);
-            List<StudentEntity> studentEntities =  studentDao.findBySchoolIdAndSchoolTypeAndSubject(schoolId,grade,SubjectType.ZHENGZHI);
+            List<StudentEntity> studentEntities =  studentRepository.findBySchoolIdAndSchoolTypeAndSubject(schoolId,grade,SubjectType.ZHENGZHI);
 
             createFixationSheet(os, studentEntities,wb,sheet,row);
         }
@@ -575,7 +570,7 @@ public class SchoolController {
         cteateCell(wb, ysyRow, (short) 4, "座位号");
         cteateCell(wb, ysyRow, (short) 5, "是否参加成绩统计");
         cteateCell(wb, ysyRow, (short) 6, "学校");
-        List<StudentEntity> studentEntities =  studentDao.findBySubject(SubjectType.YSY);
+        List<StudentEntity> studentEntities =  studentRepository.findBySubject(SubjectType.YSY);
         if (null!=studentEntities&&studentEntities.size()>0){
             int i = 0;
             Iterator<StudentEntity> studentEntityIterator = studentEntities.iterator();
@@ -589,7 +584,7 @@ public class SchoolController {
                     cteateCell(wb, rowi, (short) 3, studentEntity.getExamRoomNum());
                     cteateCell(wb, rowi, (short) 4, studentEntity.getSeatNum());
                     cteateCell(wb, rowi, (short) 5, studentEntity.getIsJoin());
-                    SchoolEntity schoolDaoOne = schoolDao.getOne(studentEntity.getSchoolId());
+                    SchoolEntity schoolDaoOne = schoolRepository.getOne(studentEntity.getSchoolId());
                     cteateCell(wb, rowi, (short) 6, schoolDaoOne.getName());
                 }
             }
@@ -601,7 +596,7 @@ public class SchoolController {
         cteateCell(wb, yjjsRow, (short) 1, "类别");
         cteateCell(wb, yjjsRow, (short) 2, "姓名");
         cteateCell(wb, yjjsRow, (short) 3, "学校");
-        List<TeacherEntity> teacherDaoAll = teacherDao.findBySchoolType(grade);
+        List<TeacherEntity> teacherDaoAll = teacherRepository.findBySchoolType(grade);
         if (null!=teacherDaoAll&&teacherDaoAll.size()>0){
             int i = 0;
             Iterator<TeacherEntity> iterator = teacherDaoAll.iterator();
@@ -612,7 +607,7 @@ public class SchoolController {
                     cteateCell(wb, rowi, (short) 0, teacherEntity.getSubject());
                     cteateCell(wb, rowi, (short) 1, teacherEntity.getType());
                     cteateCell(wb, rowi, (short) 2, teacherEntity.getName());
-                    SchoolEntity schoolDaoOne = schoolDao.getOne(teacherEntity.getSchoolId());
+                    SchoolEntity schoolDaoOne = schoolRepository.getOne(teacherEntity.getSchoolId());
                     cteateCell(wb, rowi, (short) 3, schoolDaoOne.getName());
                 }
             }
@@ -625,7 +620,7 @@ public class SchoolController {
         cteateCell(wb, row, (short) 2, "填报负责人姓名");
         cteateCell(wb, row, (short) 3, "联系电话");
         cteateCell(wb, row, (short) 4, "手机号码");
-        List<SchoolEntity> schoolDaoAll = schoolDao.findAll();
+        List<SchoolEntity> schoolDaoAll = schoolRepository.findAll();
         if (null!=schoolDaoAll&&schoolDaoAll.size()>0){
             int i = 0;
             Iterator<SchoolEntity> iterator = schoolDaoAll.iterator();

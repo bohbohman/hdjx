@@ -1,12 +1,14 @@
 package com.spring.bohbohman.entity;
 
+import lombok.Data;
+
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @Table(name = "school")
-public class SchoolEntity implements Serializable {
+@Data
+public class SchoolEntity implements BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -90,109 +92,5 @@ public class SchoolEntity implements Serializable {
     @PreUpdate
     public void onUpdate() {
         updatedAt = new Date();
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getPhonetic() {
-        return phonetic;
-    }
-
-    public void setPhonetic(String phonetic) {
-        this.phonetic = phonetic;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public String getIsComplete() {
-        return isComplete;
-    }
-
-    public void setIsComplete(String isComplete) {
-        this.isComplete = isComplete;
-    }
-
-    public String getGrandNum() {
-        return grandNum;
-    }
-
-    public void setGrandNum(String grandNum) {
-        this.grandNum = grandNum;
-    }
-
-    public String getPrincipal() {
-        return principal;
-    }
-
-    public void setPrincipal(String principal) {
-        this.principal = principal;
-    }
-
-    public String getTel() {
-        return tel;
-    }
-
-    public void setTel(String tel) {
-        this.tel = tel;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
     }
 }

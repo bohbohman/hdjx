@@ -1,11 +1,10 @@
 package com.spring.bohbohman.controller;
 
-import com.google.common.collect.Lists;
 import com.spring.bohbohman.bean.request.TeacherRequest;
 import com.spring.bohbohman.bean.response.TeacherResponse;
-import com.spring.bohbohman.dao.SchoolDao;
-import com.spring.bohbohman.dao.StudentDao;
-import com.spring.bohbohman.dao.TeacherDao;
+import com.spring.bohbohman.repository.SchoolRepository;
+import com.spring.bohbohman.repository.StudentRepository;
+import com.spring.bohbohman.repository.TeacherRepository;
 import com.spring.bohbohman.entity.TeacherEntity;
 import com.spring.bohbohman.util.BeanMapping;
 import org.apache.commons.lang3.StringUtils;
@@ -25,13 +24,13 @@ public class TeacherController {
 
 
     @Autowired
-    private SchoolDao schoolDao;
+    private SchoolRepository schoolRepository;
 
     @Autowired
-    private StudentDao studentDao;
+    private StudentRepository studentRepository;
 
     @Autowired
-    private TeacherDao teacherDao;
+    private TeacherRepository teacherRepository;
 
     /**
      * 新增
@@ -45,7 +44,7 @@ public class TeacherController {
         Map<String, Object> result = new LinkedHashMap<>();
         TeacherEntity teacherEntity = BeanMapping.map(reqBean,TeacherEntity.class);
         teacherEntity.setId(null);
-        teacherEntity = teacherDao.save(teacherEntity);
+        teacherEntity = teacherRepository.save(teacherEntity);
         TeacherResponse teacherResponse = BeanMapping.map(teacherEntity,TeacherResponse.class);
 
         result.put("status", true);
@@ -62,7 +61,7 @@ public class TeacherController {
     @RequestMapping(value = "", method = RequestMethod.PUT)
     Map<String, Object> update(@RequestBody TeacherRequest reqBean){
         Map<String, Object> result = new LinkedHashMap<>();
-        Optional<TeacherEntity> optionalTeacherEntity = teacherDao.findById(reqBean.getId());
+        Optional<TeacherEntity> optionalTeacherEntity = teacherRepository.findById(reqBean.getId());
         if (null == optionalTeacherEntity) {
             result.put("status", false);
             result.put("msg", "老师不存在！");
@@ -74,7 +73,7 @@ public class TeacherController {
         teacherEntity.setType(reqBean.getType());
         teacherEntity.setPhone(reqBean.getPhone());
         teacherEntity.setSchoolType(reqBean.getSchoolType());
-        teacherEntity = teacherDao.save(teacherEntity);
+        teacherEntity = teacherRepository.save(teacherEntity);
         TeacherResponse teacherResponse = BeanMapping.map(teacherEntity,TeacherResponse.class);
         result.put("status", true);
         result.put("msg", "修改老师成功");
@@ -90,13 +89,13 @@ public class TeacherController {
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     Map<String, Object> delete(@PathVariable Integer id){
         Map<String, Object> result = new LinkedHashMap<>();
-        TeacherEntity teacherEntity = teacherDao.getOne(id);
+        TeacherEntity teacherEntity = teacherRepository.getOne(id);
         if (null == teacherEntity) {
             result.put("status", false);
             result.put("msg", "老师不存在！");
             return result;
         }
-        teacherDao.deleteById(id);
+        teacherRepository.deleteById(id);
         result.put("status", true);
         result.put("msg", "删除老师成功");
         return result;
@@ -110,7 +109,7 @@ public class TeacherController {
      */
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     TeacherResponse get(@PathVariable Integer id){
-        TeacherEntity teacherEntity = teacherDao.getOne(id);
+        TeacherEntity teacherEntity = teacherRepository.getOne(id);
         TeacherResponse teacherResponse= BeanMapping.map(teacherEntity,TeacherResponse.class);
         return teacherResponse;
     }
@@ -148,7 +147,7 @@ public class TeacherController {
                 return criteriaBuilder.and(predicate.toArray(new Predicate[predicate.size()]));
             }
         };
-        List<TeacherEntity> teacherEntityList = teacherDao.findAll(specification);
+        List<TeacherEntity> teacherEntityList = teacherRepository.findAll(specification);
         List<TeacherResponse> teacherResponseList = BeanMapping.mapList(teacherEntityList,TeacherResponse.class);
         return teacherResponseList;
     }

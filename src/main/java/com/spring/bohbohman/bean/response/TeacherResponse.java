@@ -1,11 +1,12 @@
 package com.spring.bohbohman.bean.response;
 
-import javax.persistence.Column;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import com.spring.bohbohman.bean.AbstractBaseApiBean;
+import lombok.Data;
+
 import java.util.Date;
 
-public class TeacherResponse {
+@Data
+public class TeacherResponse extends AbstractBaseApiBean {
 
     private Integer id;
 

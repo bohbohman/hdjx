@@ -1,10 +1,10 @@
 package com.spring.bohbohman.bean.request;
 
-import javax.persistence.*;
-import java.util.Date;
+import com.spring.bohbohman.bean.AbstractBaseApiBean;
+import lombok.Data;
 
-public class StudentRequest {
-
+@Data
+public class StudentRequest extends AbstractBaseApiBean {
 
     private Integer id;
 
@@ -60,100 +60,4 @@ public class StudentRequest {
      */
     private String schoolType;
 
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getSchoolId() {
-        return schoolId;
-    }
-
-    public void setSchoolId(Integer schoolId) {
-        this.schoolId = schoolId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getGrade() {
-        return grade;
-    }
-
-    public void setGrade(String grade) {
-        this.grade = grade;
-    }
-
-    public String getIdCard() {
-        return idCard;
-    }
-
-    public void setIdCard(String idCard) {
-        this.idCard = idCard;
-    }
-
-    public String getExamRoomNum() {
-        return examRoomNum;
-    }
-
-    public void setExamRoomNum(String examRoomNum) {
-        this.examRoomNum = examRoomNum;
-    }
-
-    public String getSubject() {
-        return subject;
-    }
-
-    public void setSubject(String subject) {
-        this.subject = subject;
-    }
-
-    public String getSeatNum() {
-        return seatNum;
-    }
-
-    public void setSeatNum(String seatNum) {
-        this.seatNum = seatNum;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getIsJoin() {
-        return isJoin;
-    }
-
-    public void setIsJoin(String isJoin) {
-        this.isJoin = isJoin;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getSchoolType() {
-        return schoolType;
-    }
-
-    public void setSchoolType(String schoolType) {
-        this.schoolType = schoolType;
-    }
 }
