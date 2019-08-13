@@ -2,9 +2,11 @@ package com.spring.bohbohman.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
+import com.itextpdf.text.DocumentException;
 import com.spring.bohbohman.repository.SchoolRepository;
 import com.spring.bohbohman.repository.TeacherRepository;
 import com.spring.bohbohman.entity.SchoolEntity;
+import com.spring.bohbohman.util.ITextPDFUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,6 +25,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -80,6 +83,19 @@ public class HelloWorldController {
             }
         }, pageable);
         return schoolPage;
+    }
+
+    @RequestMapping(value = "/pdf", method = RequestMethod.GET)
+    public String downloadPdf() {
+        String filePath = "//Users//sqbj0042//school-system//20181217//poi.PDF";
+        try {
+            ITextPDFUtil.createPDF(filePath);
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "success";
     }
 
 }

@@ -2,7 +2,7 @@ package com.spring.bohbohman.controller;
 
 import com.spring.bohbohman.bean.request.LoginRequest;
 import com.spring.bohbohman.bean.request.UpdatePasswordRequest;
-import com.spring.bohbohman.core.SubjectType;
+import com.spring.bohbohman.constant.SubjectType;
 import com.spring.bohbohman.repository.SchoolRepository;
 import com.spring.bohbohman.repository.StudentRepository;
 import com.spring.bohbohman.repository.TeacherRepository;
